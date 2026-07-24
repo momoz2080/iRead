@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Popoosh's Reading Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#FF6F59;
+    --coral-dark:#E5543F;
+    --teal:#1FB8A6;
+    --teal-dark:#159485;
+    --ember:#FF7A33;
+    --ember-dark:#E85D1F;
+    --cream:#FFF8EE;
+    --ink:#2E2A26;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    background:linear-gradient(160deg,#FFF8EE 0%, #FFE9D6 100%);
+    font-family:'Atkinson Hyperlegible', sans-serif;
+    color:var(--ink);
+    overflow:hidden;
+    touch-action:manipulation;
+    user-select:none;
+  }
+  .app{
+    height:100vh; height:100dvh;
+    display:flex; flex-direction:column;
+    position:relative;
+  }
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:14px 20px;
+    z-index:5;
+  }
+  .title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(15px,3vw,21px);
+    color:var(--ember-dark);
+    display:flex; align-items:center; gap:8px;
+  }
+  .title .paw{font-size:1.3em;}
+  .level-pill{
+    font-size:0.6em;
+    background:var(--ember);
+    color:#fff;
+    border-radius:999px;
+    padding:2px 10px;
+    margin-left:4px;
+    font-weight:800;
+    white-space:nowrap;
+  }
+  .header-controls{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .icon-btn{
+    width:44px; height:44px;
+    border-radius:50%;
+    border:2px solid var(--teal);
+    background:#fff;
+    font-size:20px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 0 rgba(0,0,0,0.06);
+    cursor:pointer;
+    flex-shrink:0;
+    transition:transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .icon-btn:active{transform:scale(0.92);}
+  .icon-btn.active{
+    background:var(--coral);
+    border-color:var(--coral-dark);
+  }
+  .stat{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:clamp(13px,2.6vw,16px);
+    background:#fff;
+    border:2px solid var(--teal);
+    color:var(--teal-dark);
+    padding:6px 14px;
+    border-radius:999px;
+    box-shadow:0 3px 0 rgba(0,0,0,0.06);
+    white-space:nowrap;
+  }
+  .stat.stat-money{
+    border-color:var(--ember);
+    color:var(--ember-dark);
+  }
+  button.stat{
+    cursor:pointer;
+    -webkit-appearance:none;
+    appearance:none;
+    outline:none;
+  }
+  button.stat:active{transform:scale(0.95);}
+
+  .coin-grid{
+    display:flex; flex-wrap:wrap; gap:14px;
+    justify-content:center;
+    padding:6px 0 10px;
+  }
+  .coin-group{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .coin-icon{
+    width:56px; height:56px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:13px;
+    box-shadow:0 3px 0 rgba(0,0,0,0.15) inset, 0 3px 0 rgba(0,0,0,0.08);
+    border:3px solid rgba(0,0,0,0.12);
+  }
+  .coin-dollar{ background:#8FD19E; color:#1F5C33; }
+  .coin-quarter{ background:#D9DEE3; color:#5B6670; }
+  .coin-dime{ background:#E4E8EC; color:#5B6670; }
+  .coin-nickel{ background:#CFD6DC; color:#4A545C; }
+  .coin-penny{ background:#D98C5F; color:#6B3A18; }
+  .coin-count{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .piggy-balance{
+    text-align:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(36px,9vw,52px);
+    color:var(--ember-dark);
+    padding:6px 0 2px;
+  }
+  .piggy-balance-label{
+    text-align:center;
+    color:#8a8177;
+    font-weight:700;
+    font-size:14px;
+    margin-bottom:4px;
+  }
+  .cashout-btn{
+    display:block;
+    margin:14px auto 4px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:16px;
+    color:#fff;
+    background:var(--teal-dark);
+    border:none;
+    padding:12px 28px;
+    border-radius:999px;
+    box-shadow:0 4px 0 rgba(0,0,0,0.12);
+    cursor:pointer;
+  }
+  .cashout-btn:active{transform:scale(0.96);}
+  .cashout-btn:disabled{
+    background:#D9D2C4;
+    color:#a89f90;
+    cursor:default;
+    box-shadow:none;
+  }
+  .piggy-section-title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:15px;
+    color:var(--ink);
+    margin:18px 0 8px;
+  }
+  .cashout-history-item{
+    display:flex; align-items:center; justify-content:space-between;
+    border:2px solid #F0E5D4;
+    border-radius:14px;
+    padding:10px 14px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+  }
+  .cashout-history-date{
+    color:#8a8177; font-size:13px;
+  }
+  .cashout-history-amount{
+    color:var(--teal-dark); font-size:15px;
+  }
+
+  .timerWrap{
+    padding:2px 20px 8px;
+    z-index:5;
+  }
+  .timerBarBg{
+    width:100%;
+    height:14px;
+    background:#F0E5D4;
+    border-radius:999px;
+    overflow:hidden;
+    border:2px solid #E7DCCB;
+  }
+  .timerBarFill{
+    height:100%;
+    background:linear-gradient(90deg, var(--ember), var(--ember-dark));
+    width:100%;
+    transition:width 1s linear;
+  }
+  .timerLabel{
+    text-align:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:14px;
+    color:var(--ember-dark);
+    margin-top:4px;
+  }
+
+  .stage{
+    flex:1;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    padding:10px 16px 30px;
+  }
+
+  .card{
+    width:100%; max-width:900px; height:100%;
+    max-height:520px;
+    background:#fff;
+    border-radius:34px;
+    box-shadow:0 14px 0 rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.08);
+    border:6px solid var(--ember);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:relative;
+    cursor:pointer;
+    transition:transform .12s ease;
+    text-align:center;
+    padding:20px;
+  }
+  .card:active{transform:scale(0.98);}
+
+  .word{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(56px, 17vw, 190px);
+    line-height:1;
+    color:var(--coral-dark);
+    letter-spacing:1px;
+    text-align:center;
+    padding:0 20px;
+  }
+
+  .hint{
+    margin-top:18px;
+    font-size:clamp(14px,2.6vw,18px);
+    color:#8a8177;
+    font-weight:700;
+    text-align:center;
+  }
+
+  .speaker{
+    position:absolute;
+    bottom:22px; right:26px;
+    width:64px; height:64px;
+    border-radius:50%;
+    background:var(--teal);
+    border:4px solid var(--teal-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px;
+    box-shadow:0 5px 0 rgba(0,0,0,0.08);
+  }
+  .speaker:active{transform:scale(0.92);}
+
+  .mascot-badge{
+    position:absolute;
+    top:18px; left:24px;
+    width:52px; height:52px;
+    border-radius:50%;
+    background:var(--coral);
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px;
+    border:4px solid #fff;
+    box-shadow:0 3px 0 rgba(0,0,0,0.1);
+  }
+
+  .rec-indicator{
+    position:absolute;
+    top:18px; right:24px;
+    background:var(--coral-dark);
+    color:#fff;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:13px;
+    padding:6px 14px;
+    border-radius:999px;
+    display:none;
+    align-items:center;
+    gap:6px;
+    animation:recPulse 1.2s infinite;
+  }
+  @keyframes recPulse{0%,100%{opacity:1;}50%{opacity:0.45;}}
+
+  /* Start screen content */
+  .start-emoji{ font-size:72px; margin-bottom:6px; }
+  .start-title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(28px,5.5vw,44px);
+    color:var(--ember-dark);
+    margin:6px 0 10px;
+  }
+  .start-sub{
+    font-size:clamp(15px,3vw,19px);
+    color:#8a8177;
+    font-weight:700;
+    max-width:480px;
+  }
+  .start-cta{
+    margin-top:22px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(18px,3.4vw,24px);
+    color:#fff;
+    background:var(--ember-dark);
+    padding:14px 36px;
+    border-radius:999px;
+    box-shadow:0 5px 0 rgba(0,0,0,0.15);
+  }
+
+  /* Results screen content */
+  .result-emoji{ font-size:64px; margin-bottom:4px; }
+  .result-wpm{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(64px,14vw,120px);
+    color:var(--ember-dark);
+    line-height:1;
+  }
+  .result-label{
+    font-size:clamp(15px,3vw,19px);
+    color:#8a8177;
+    font-weight:700;
+    margin-top:2px;
+  }
+  .result-message{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:clamp(18px,3.4vw,24px);
+    color:var(--coral-dark);
+    margin:16px 0 6px;
+    max-width:520px;
+  }
+  .result-best{
+    font-size:clamp(14px,2.8vw,17px);
+    color:var(--teal-dark);
+    font-weight:700;
+  }
+  .result-earned{
+    font-family:'Baloo 2', sans-serif;
+    font-size:clamp(14px,2.8vw,17px);
+    color:var(--ember-dark);
+    font-weight:700;
+    margin-top:6px;
+  }
+  .result-accuracy{
+    font-family:'Baloo 2', sans-serif;
+    font-size:clamp(14px,2.8vw,17px);
+    font-weight:800;
+    margin-top:10px;
+    padding:6px 16px;
+    border-radius:999px;
+    display:inline-block;
+  }
+  .result-accuracy.pass{
+    background:#DFF3EF;
+    color:var(--teal-dark);
+  }
+  .result-accuracy.fail{
+    background:#FBE2DD;
+    color:var(--coral-dark);
+  }
+  .result-again{
+    margin-top:20px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    color:#8a8177;
+  }
+
+  canvas#confetti{
+    position:fixed; inset:0; z-index:60; pointer-events:none;
+  }
+
+  /* My Recordings modal */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(46,42,38,0.55);
+    z-index:80;
+    display:none;
+    align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .modal{
+    background:#fff;
+    border-radius:28px;
+    max-width:560px; width:100%;
+    max-height:80vh;
+    display:flex; flex-direction:column;
+    border:6px solid var(--teal);
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    user-select:text;
+  }
+  .modal-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px;
+    border-bottom:2px solid #F0E5D4;
+    flex-shrink:0;
+  }
+  .modal-title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:20px;
+    color:var(--teal-dark);
+  }
+  .modal-close{
+    width:36px; height:36px;
+    border-radius:50%;
+    border:none;
+    background:#F0E5D4;
+    color:var(--ink);
+    font-size:17px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .modal-close:active{transform:scale(0.9);}
+  .modal-body{
+    overflow-y:auto;
+    padding:16px 20px 20px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .rec-empty{
+    text-align:center;
+    color:#8a8177;
+    font-weight:700;
+    padding:34px 10px;
+    font-size:15px;
+  }
+  .rec-item{
+    border:2px solid #F0E5D4;
+    border-radius:18px;
+    padding:12px 14px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .rec-item-info{
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:'Baloo 2', sans-serif; font-weight:700;
+    gap:8px;
+  }
+  .rec-item-date{
+    color:#8a8177;
+    font-size:14px;
+  }
+  .rec-item-wpm{
+    color:var(--ember-dark);
+    font-size:14px;
+    background:#FFE9D6;
+    padding:3px 12px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .rec-item-controls{
+    display:flex; align-items:center; gap:10px;
+  }
+  .rec-item-controls audio{
+    flex:1; height:36px; min-width:0;
+  }
+  .rec-delete-btn{
+    width:36px; height:36px;
+    border-radius:50%;
+    border:2px solid var(--coral-dark);
+    background:#fff;
+    color:var(--coral-dark);
+    font-size:15px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .rec-delete-btn:active{transform:scale(0.9);}
+  .rec-download-btn{
+    width:36px; height:36px;
+    border-radius:50%;
+    border:2px solid var(--teal-dark);
+    background:#fff;
+    color:var(--teal-dark);
+    font-size:15px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    text-decoration:none;
+  }
+  .rec-download-btn:active{transform:scale(0.9);}
+
+  .toast{
+    position:fixed;
+    bottom:24px; left:50%;
+    transform:translateX(-50%);
+    background:var(--ink);
+    color:#fff;
+    padding:10px 22px;
+    border-radius:999px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    z-index:90;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
+    max-width:85vw;
+    text-align:center;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="title"><span class="paw">🐾</span> Popoosh's Reading <span class="level-pill">LEVEL 6</span></div>
+    <div class="header-controls">
+      <button class="icon-btn" id="recordToggleBtn" title="Turn on recording" aria-label="Toggle recording">🎙️</button>
+      <button class="icon-btn" id="myRecordingsBtn" title="My Recordings" aria-label="My recordings">📼</button>
+      <div class="stat" id="totalStat">Best WPM: 0</div>
+      <button class="stat stat-money" id="earningsStat" title="Open the piggy bank">💰 $0.00</button>
+    </div>
+  </header>
+
+  <div class="timerWrap" id="timerWrap" style="visibility:hidden;">
+    <div class="timerBarBg"><div class="timerBarFill" id="timerFill"></div></div>
+    <div class="timerLabel" id="timerLabel">0:60</div>
+  </div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <div class="mascot-badge">🐱</div>
+      <div class="rec-indicator" id="recIndicator">● REC</div>
+      <div id="cardContent"></div>
+      <div class="speaker" id="speaker" style="display:none;">🔊</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="recordingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📼 My Recordings</div>
+      <button class="modal-close" id="closeRecordingsBtn" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="recordingsList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="piggyBankModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🐷 Popoosh's Piggy Bank</div>
+      <button class="modal-close" id="closePiggyBankBtn" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="piggyBankBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+// ---------- Combined word pool: every word from Levels 1-5, tagged by ----------
+// ---------- source level so the matching audio folder can be used. -----------
+const LEVEL1_WORDS = ["cat","bat","hat","mat","sat","rat","fat","pat","van","man","can","fan","pan","ran","tan","ban","jam","ham","ram","dam","cap","map","nap","tap","lap","gap","sap","rap","zap","bag","tag","wag","rag","sag","bad","dad","had","mad","sad","pad","lad","cab","dab","jab","lab","nab","tab","wax","fax","tax","max","sax","gas","has","bed","red","fed","led","wed","hen","ten","den","pen","men","net","wet","get","jet","let","met","pet","set","vet","yet","beg","leg","peg","gem","hem","web","keg","pig","big","dig","fig","jig","rig","wig","zip","dip","hip","lip","nip","rip","sip","tip","bit","fit","hit","kit","lit","pit","sit","wit","bin","din","fin","pin","sin","tin","win","kid","lid","rid","hid","did","mix","fix","six","nix","rim","dim","him","dog","hog","jog","log","fog","cot","dot","got","hot","jot","lot","not","pot","rot","tot","cob","job","mob","rob","sob","hop","mop","pop","top","cop","box","fox","pox","bug","dug","hug","jug","mug","rug","tug","bun","fun","gun","nun","pun","run","sun","but","cut","gut","hut","jut","nut","rut","cub","cup","pup","sup","tub","mud","bud","dud","mum","gum","hum","sum","bus","bum"];
+const LEVEL2_WORDS = ["black","blob","block","blot","bluff","clap","clam","clip","clock","cluck","club","flag","flap","flat","flip","flop","fluff","glad","glass","glob","plan","plot","plug","plum","slam","slap","sled","slid","slip","slit","slot","slug","brag","brat","bran","brick","crab","crib","crop","crust","drag","drop","drum","frog","fresh","grab","grid","grin","grip","grunt","trap","trick","trim","trip","truck","trust","scab","scan","scat","skid","skin","skip","skit","skull","small","smash","smell","snap","snip","snug","span","spin","spot","spun","stab","step","stiff","stop","stub","stuck","swam","swim","twig","twin","chap","chat","chess","chick","chill","chin","chip","chop","chunk","shed","ship","shop","shot","shut","that","them","then","thin","this","thud","whip","whiz","band","bend","bond","fund","hand","land","sand","wind","mend","sent","tent","dent","hunt","mint","lint","camp","damp","lamp","ramp","bump","dump","jump","lump","pump","pink","sink","wink","bank","tank","sank","dunk","junk","gift","lift","raft","soft","belt","felt","melt","milk","silk","bulk","cold","gold","hold","bold","fish","dish","wish","cash","dash","hash","mash","rash","much","such","rich","bath","math","path","with"];
+const LEVEL3_WORDS = ["cake","bake","cape","gate","gaze","lake","late","made","make","name","page","rake","sale","same","tale","tame","wade","wake","wave","cave","date","fade","gave","base","case","face","lace","race","pace","mane","cane","pane","tape","came","fame","game","haze","daze","maze","bike","dime","dine","dive","file","fine","five","hide","hike","hive","kite","life","like","lime","line","mile","mine","nice","nine","pile","pine","pipe","ride","ripe","rise","side","site","size","tide","tile","time","vine","wide","wife","wine","wipe","dice","mice","rice","vice","bone","cone","dome","dose","hole","home","hope","hose","joke","lobe","mole","nose","note","pole","robe","rode","role","rope","rose","tone","vote","woke","zone","code","mode","cube","cute","dude","dune","fume","fuse","huge","mule","mute","rude","rule","tube","tune","duke"];
+const LEVEL4_WORDS = ["rain","main","pain","gain","sail","tail","mail","nail","rail","jail","wait","paid","maid","laid","fail","hail","bail","aim","day","hay","jay","lay","may","pay","ray","say","way","bay","see","bee","fee","tee","wee","deed","feed","heed","need","reed","seed","weed","keep","beep","deep","jeep","peep","weep","seek","peek","week","meek","geek","sheep","sheet","wheel","cheek","eat","seat","meat","heat","beat","neat","team","beam","seam","leaf","beak","peak","weak","leak","deal","heal","meal","real","seal","bead","boat","coat","goat","load","road","toad","foam","roam","soap","oak","coal","moan","loan","soak","goal","low","mow","row","sow","tow","show","high","sigh","night","light","might","right","sight","tight","fight"];
+const LEVEL5_WORDS = ["car","bar","far","jar","tar","card","yard","hard","dark","mark","park","bark","harm","farm","barn","yarn","darn","cart","dart","part","tart","shark","her","per","herd","fern","germ","perk","jerk","term","nerd","bird","dirt","girl","firm","sir","shirt","first","third","birth","for","corn","fork","form","horn","born","torn","worn","north","fort","sort","short","thorn","porch","fur","burn","turn","curl","hurt","curb","surf","turf","church","oil","boil","coil","foil","soil","toil","coin","join","point","joint","moist","toy","boy","joy","soy","coy","out","pout","loud","round","sound","found","mound","pound","hound","count","mouth","south","couch","pouch","ouch","cow","how","now","vow","wow","bow","down","gown","town","owl","fowl","howl","chow"];
+
+const WORDS = [
+  ...LEVEL1_WORDS.map(word => ({ word, level: 1 })),
+  ...LEVEL2_WORDS.map(word => ({ word, level: 2 })),
+  ...LEVEL3_WORDS.map(word => ({ word, level: 3 })),
+  ...LEVEL4_WORDS.map(word => ({ word, level: 4 })),
+  ...LEVEL5_WORDS.map(word => ({ word, level: 5 })),
+];
+
+const ROUND_SECONDS = 60;
+
+// ---------- State ----------
+let deck = shuffle([...WORDS]);
+let deckIndex = 0;
+let phase = 'idle'; // 'idle' | 'running' | 'results'
+let secondsLeft = ROUND_SECONDS;
+let timerHandle = null;
+let wordsThisRound = 0;
+let wordsShownThisRound = [];
+let bestWPM = parseInt(localStorage.getItem('sprintFluency_bestWPM') || '0', 10);
+let earningsCents = parseInt(localStorage.getItem('sprintFluency_earningsCents') || '0', 10);
+let cashOutHistory = JSON.parse(localStorage.getItem('sprintFluency_cashOutHistory') || '[]');
+const CENTS_PER_SPRINT = 10;
+
+const cardEl = document.getElementById('card');
+const cardContentEl = document.getElementById('cardContent');
+const totalStatEl = document.getElementById('totalStat');
+const earningsStatEl = document.getElementById('earningsStat');
+const speakerEl = document.getElementById('speaker');
+const timerWrapEl = document.getElementById('timerWrap');
+const timerFillEl = document.getElementById('timerFill');
+const timerLabelEl = document.getElementById('timerLabel');
+const recIndicatorEl = document.getElementById('recIndicator');
+const recordToggleBtn = document.getElementById('recordToggleBtn');
+const myRecordingsBtn = document.getElementById('myRecordingsBtn');
+const recordingsModal = document.getElementById('recordingsModal');
+const closeRecordingsBtn = document.getElementById('closeRecordingsBtn');
+const recordingsListEl = document.getElementById('recordingsList');
+const piggyBankModal = document.getElementById('piggyBankModal');
+const closePiggyBankBtn = document.getElementById('closePiggyBankBtn');
+const piggyBankBodyEl = document.getElementById('piggyBankBody');
+const toastEl = document.getElementById('toast');
+
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function updateBestStat(){
+  totalStatEl.textContent = `Best WPM: ${bestWPM}`;
+}
+updateBestStat();
+
+function updateEarningsStat(){
+  earningsStatEl.textContent = `💰 $${(earningsCents / 100).toFixed(2)}`;
+}
+updateEarningsStat();
+
+// ---------- Piggy bank: coin breakdown, cash-out, and cash-out history ----------
+const COIN_DENOMINATIONS = [
+  { value: 100, label: '$1',  className: 'coin-dollar' },
+  { value: 25,  label: '25¢', className: 'coin-quarter' },
+  { value: 10,  label: '10¢', className: 'coin-dime' },
+  { value: 5,   label: '5¢',  className: 'coin-nickel' },
+  { value: 1,   label: '1¢',  className: 'coin-penny' }
+];
+
+function centsToCoins(cents){
+  let remaining = cents;
+  const result = [];
+  COIN_DENOMINATIONS.forEach(d => {
+    const count = Math.floor(remaining / d.value);
+    if(count > 0){
+      result.push({ ...d, count });
+      remaining -= count * d.value;
+    }
+  });
+  return result;
+}
+
+function saveCashOutHistory(){
+  localStorage.setItem('sprintFluency_cashOutHistory', JSON.stringify(cashOutHistory));
+}
+
+function formatCashOutDate(ts){
+  return new Date(ts).toLocaleString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+  });
+}
+
+function cashOut(){
+  if(earningsCents <= 0){
+    showToast("No money in the piggy bank yet!");
+    return;
+  }
+  const amount = earningsCents;
+  const confirmed = window.confirm(`Cash out $${(amount / 100).toFixed(2)} and empty the piggy bank?`);
+  if(!confirmed) return;
+  cashOutHistory.unshift({ timestamp: Date.now(), amountCents: amount });
+  saveCashOutHistory();
+  earningsCents = 0;
+  localStorage.setItem('sprintFluency_earningsCents', '0');
+  updateEarningsStat();
+  renderPiggyBank();
+  showToast(`Cashed out $${(amount / 100).toFixed(2)}!`);
+}
+
+function renderPiggyBank(){
+  const coins = centsToCoins(earningsCents);
+  const coinGridHTML = coins.length
+    ? coins.map(c => `
+        <div class="coin-group">
+          <div class="coin-icon ${c.className}">${c.label}</div>
+          <div class="coin-count">× ${c.count}</div>
+        </div>
+      `).join('')
+    : '<div class="rec-empty">Nothing saved up yet — finish a sprint to earn a coin!</div>';
+
+  const historyHTML = cashOutHistory.length
+    ? cashOutHistory.map(h => `
+        <div class="cashout-history-item">
+          <div class="cashout-history-date">${formatCashOutDate(h.timestamp)}</div>
+          <div class="cashout-history-amount">$${(h.amountCents / 100).toFixed(2)}</div>
+        </div>
+      `).join('')
+    : '<div class="rec-empty">No cash-outs yet.</div>';
+
+  piggyBankBodyEl.innerHTML = `
+    <div class="piggy-balance-label">In the piggy bank</div>
+    <div class="piggy-balance">$${(earningsCents / 100).toFixed(2)}</div>
+    <div class="coin-grid">${coinGridHTML}</div>
+    <button class="cashout-btn" id="cashOutBtn" ${earningsCents <= 0 ? 'disabled' : ''}>Cash Out</button>
+    <div class="piggy-section-title">Cash-out history</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">${historyHTML}</div>
+  `;
+  document.getElementById('cashOutBtn').addEventListener('click', cashOut);
+}
+
+function openPiggyBankModal(){
+  renderPiggyBank();
+  piggyBankModal.style.display = 'flex';
+}
+
+function closePiggyBankModal(){
+  piggyBankModal.style.display = 'none';
+}
+
+earningsStatEl.addEventListener('click', openPiggyBankModal);
+closePiggyBankBtn.addEventListener('click', closePiggyBankModal);
+piggyBankModal.addEventListener('click', (e) => {
+  if(e.target === piggyBankModal) closePiggyBankModal();
+});
+
+function formatTime(s){
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+function currentEntry(){
+  return deck[deckIndex % deck.length];
+}
+
+function renderIdle(){
+  timerWrapEl.style.visibility = 'hidden';
+  speakerEl.style.display = 'none';
+  cardContentEl.innerHTML = `
+    <div class="start-emoji">⏱️</div>
+    <div class="start-title">60-Second Reading Sprint</div>
+    <div class="start-sub">Read as many words as you can before time runs out. Tap the card to begin!</div>
+    <div class="start-cta">Tap to Start</div>
+  `;
+}
+
+function renderWord(){
+  timerWrapEl.style.visibility = 'visible';
+  speakerEl.style.display = 'flex';
+  wordsShownThisRound.push(currentEntry().word);
+  cardContentEl.innerHTML = `<div class="word">${currentEntry().word}</div><div class="hint">Tap for the next word</div>`;
+}
+
+function renderResults(wpm, isNewBest, accuracyInfo){
+  timerWrapEl.style.visibility = 'hidden';
+  speakerEl.style.display = 'none';
+  updateRecordingIndicator(false);
+
+  let message;
+  if(wpm < 15) message = "You're building great reading speed — keep it up!";
+  else if(wpm < 30) message = "Nice reading pace!";
+  else if(wpm < 45) message = "Great job — you're getting faster!";
+  else if(wpm < 60) message = "Awesome fluent reading!";
+  else message = "Wow, superstar reader! 🌟";
+
+  let accuracyHTML = '';
+  let earnedHTML;
+  if(accuracyInfo.checked){
+    const passClass = accuracyInfo.passed ? 'pass' : 'fail';
+    accuracyHTML = `<div class="result-accuracy ${passClass}">🎯 Reading accuracy: ${accuracyInfo.percent}%</div>`;
+    earnedHTML = accuracyInfo.passed
+      ? `+10¢ earned — $${(earningsCents / 100).toFixed(2)} total`
+      : `No coin this time — read at least ${ACCURACY_THRESHOLD}% of the words aloud to earn one. Total: $${(earningsCents / 100).toFixed(2)}`;
+  }else{
+    earnedHTML = `+10¢ earned — $${(earningsCents / 100).toFixed(2)} total`;
+  }
+
+  cardContentEl.innerHTML = `
+    <div class="result-emoji">${isNewBest ? '🏆' : '🎉'}</div>
+    <div class="result-wpm">${wpm}</div>
+    <div class="result-label">words per minute</div>
+    ${accuracyHTML}
+    <div class="result-message">${message}</div>
+    <div class="result-best">${isNewBest ? 'New personal best!' : `Personal best: ${bestWPM} WPM`}</div>
+    <div class="result-earned">${earnedHTML}</div>
+    <div class="result-again">Tap to read again</div>
+  `;
+  launchConfetti();
+}
+
+async function startRound(){
+  phase = 'running';
+  deck = shuffle([...WORDS]);
+  deckIndex = 0;
+  wordsThisRound = 0;
+  wordsShownThisRound = [];
+  secondsLeft = ROUND_SECONDS;
+  timerFillEl.style.width = '100%';
+  timerLabelEl.textContent = formatTime(secondsLeft);
+  renderWord();
+  startSpeechCheck();
+  await startRecordingIfEnabled();
+
+  timerHandle = setInterval(() => {
+    secondsLeft--;
+    timerLabelEl.textContent = formatTime(secondsLeft);
+    timerFillEl.style.width = `${(secondsLeft / ROUND_SECONDS) * 100}%`;
+    if(secondsLeft <= 0){
+      clearInterval(timerHandle);
+      phase = 'results';
+      finishRound();
+    }
+  }, 1000);
+}
+
+async function finishRound(){
+  const wpm = wordsThisRound; // exactly 60 seconds, so count == words per minute
+  const isNewBest = wpm > bestWPM;
+  if(isNewBest){
+    bestWPM = wpm;
+    localStorage.setItem('sprintFluency_bestWPM', String(bestWPM));
+    updateBestStat();
+  }
+
+  await stopSpeechCheck();
+  const accuracyInfo = { checked: speechCheckSupported, percent: 0, passed: true };
+  if(speechCheckSupported){
+    accuracyInfo.percent = computeReadingAccuracy(wordsShownThisRound, getAllSpokenWords());
+    accuracyInfo.passed = accuracyInfo.percent >= ACCURACY_THRESHOLD;
+  }
+  if(accuracyInfo.passed){
+    earningsCents += CENTS_PER_SPRINT;
+    localStorage.setItem('sprintFluency_earningsCents', String(earningsCents));
+    updateEarningsStat();
+  }
+
+  if(isCurrentlyRecording){
+    await stopRecordingAndSave(wpm);
+  }
+  renderResults(wpm, isNewBest, accuracyInfo);
+}
+
+function handleCardTap(){
+  if(phase === 'idle'){
+    startRound();
+  } else if(phase === 'running'){
+    wordsThisRound++;
+    deckIndex++;
+    if(deckIndex > 0 && deckIndex % deck.length === 0){
+      deck = shuffle([...WORDS]);
+    }
+    renderWord();
+  } else if(phase === 'results'){
+    phase = 'idle';
+    renderIdle();
+  }
+}
+
+renderIdle();
+
+// Local per-word audio (e.g. generated in a matching ElevenLabs voice)
+// lives in audio/level<N>/<word>.mp3, named exactly after the word shown,
+// so the sound always matches the word on screen. Falls back to the
+// browser's built-in voice if that file isn't present.
+let currentAudio = null;
+
+let selectedVoice = null;
+function warmUpVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  if(voices && voices.length){
+    selectedVoice = voices.find(v => /^en/i.test(v.lang)) || voices[0];
+  }
+}
+if('speechSynthesis' in window){
+  warmUpVoices();
+  window.speechSynthesis.onvoiceschanged = warmUpVoices;
+}
+
+function speakBrowserFallback(text){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 0.85;
+    utter.pitch = 1.05;
+    if(selectedVoice) utter.voice = selectedVoice;
+    window.speechSynthesis.speak(utter);
+  }catch(e){ /* no TTS available on this device */ }
+}
+
+function speak(entry){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  let fallenBack = false;
+  const toFallback = () => {
+    if(fallenBack) return;
+    fallenBack = true;
+    clearTimeout(safetyTimer);
+    speakBrowserFallback(entry.word);
+  };
+  const safetyTimer = setTimeout(toFallback, 900);
+  try{
+    const audio = new Audio(`audio/level${entry.level}/${entry.word}.mp3`);
+    currentAudio = audio;
+    audio.addEventListener('error', toFallback);
+    audio.addEventListener('canplay', () => { fallenBack = true; clearTimeout(safetyTimer); });
+    audio.play().catch(toFallback);
+  }catch(e){
+    toFallback();
+  }
+}
+
+cardEl.addEventListener('click', handleCardTap);
+speakerEl.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(phase === 'running') speak(currentEntry());
+});
+
+// ================= Recording: capture Adrian reading each sprint, =================
+// ================= stored in localStorage (base64 audio) so it works reliably ====
+// ================= even when this file is opened directly (no server), where ====
+// ================= IndexedDB is often blocked or restricted. =====================
+
+const RECORDINGS_KEY = 'sprintFluency_recordings';
+
+function blobToBase64(blob){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function base64ToBlob(dataUrl, mimeType){
+  const base64 = dataUrl.split(',')[1] || '';
+  const byteString = atob(base64);
+  const bytes = new Uint8Array(byteString.length);
+  for(let i = 0; i < byteString.length; i++){
+    bytes[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mimeType || 'audio/webm' });
+}
+
+function loadRecordingsList(){
+  try{
+    return JSON.parse(localStorage.getItem(RECORDINGS_KEY) || '[]');
+  }catch(e){
+    console.error('Could not read saved recordings', e);
+    return [];
+  }
+}
+
+function saveRecordingsList(list){
+  localStorage.setItem(RECORDINGS_KEY, JSON.stringify(list));
+}
+
+async function saveRecordingToStore(blob, wpm){
+  const dataUrl = await blobToBase64(blob);
+  const rec = {
+    id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`,
+    timestamp: Date.now(),
+    wpm,
+    mimeType: blob.type || 'audio/webm',
+    dataUrl
+  };
+  const list = loadRecordingsList();
+  list.unshift(rec);
+  saveRecordingsList(list);
+  return rec;
+}
+
+function getAllRecordingsFromStore(){
+  return loadRecordingsList().sort((a, b) => b.timestamp - a.timestamp);
+}
+
+function deleteRecordingFromStore(id){
+  const list = loadRecordingsList().filter(r => r.id !== id);
+  saveRecordingsList(list);
+}
+
+// ================= Reading accuracy check: listens while the sprint runs and =====
+// ================= compares what was actually said against the words shown, ======
+// ================= so tapping through without reading no longer earns a coin. ====
+
+const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+const speechCheckSupported = !!SpeechRecognitionCtor;
+const ACCURACY_THRESHOLD = 80;
+let speechRecognizer = null;
+let finalizedWords = [];
+let pendingInterimText = '';
+
+function normalizeWord(w){
+  return (w || '').toLowerCase().replace(/[^a-z]/g, '');
+}
+
+// Combines everything finalized so far with whatever's still being
+// recognized in-progress, so we never depend on a pause happening at
+// exactly the right moment to "count" a word.
+function getAllSpokenWords(){
+  const pending = pendingInterimText.trim()
+    ? pendingInterimText.trim().split(/\s+/).map(normalizeWord).filter(Boolean)
+    : [];
+  return finalizedWords.concat(pending);
+}
+
+function startSpeechCheck(){
+  finalizedWords = [];
+  pendingInterimText = '';
+  if(!speechCheckSupported) return;
+  try{
+    speechRecognizer = new SpeechRecognitionCtor();
+    speechRecognizer.continuous = true;
+    // Capture interim (not-yet-finalized) text too — with a kid tapping
+    // through words quickly, Chrome may not finalize an utterance until
+    // a pause happens, which can be well after the sprint has ended.
+    speechRecognizer.interimResults = true;
+    speechRecognizer.lang = 'en-US';
+    speechRecognizer.onresult = (event) => {
+      let interimText = '';
+      for(let i = event.resultIndex; i < event.results.length; i++){
+        const result = event.results[i];
+        const transcript = (result[0] && result[0].transcript) || '';
+        if(result.isFinal){
+          transcript.split(/\s+/).forEach(tok => {
+            const norm = normalizeWord(tok);
+            if(norm) finalizedWords.push(norm);
+          });
+        }else{
+          interimText += ' ' + transcript;
+        }
+      }
+      pendingInterimText = interimText;
+    };
+    speechRecognizer.onerror = (e) => {
+      console.warn('Speech recognition error', e && e.error);
+    };
+    speechRecognizer.onend = () => {
+      // Some browsers stop listening after a short pause even in continuous
+      // mode — restart automatically as long as the sprint is still running.
+      if(phase === 'running' && speechRecognizer){
+        try{ speechRecognizer.start(); }catch(e){ /* already running */ }
+      }
+    };
+    speechRecognizer.start();
+  }catch(e){
+    console.warn('Could not start speech recognition', e);
+  }
+}
+
+function stopSpeechCheck(){
+  return new Promise((resolve) => {
+    if(!speechRecognizer){
+      resolve();
+      return;
+    }
+    const rec = speechRecognizer;
+    speechRecognizer = null; // clear first so onend won't try to restart it
+    let settled = false;
+    const finish = () => {
+      if(settled) return;
+      settled = true;
+      resolve();
+    };
+    rec.onend = finish;
+    try{ rec.stop(); }catch(e){ finish(); }
+    // Safety net in case onend never fires on this browser.
+    setTimeout(finish, 400);
+  });
+}
+
+function computeReadingAccuracy(shownWords, spokenWords){
+  if(shownWords.length === 0) return 100;
+  let matched = 0;
+  let searchStart = 0;
+  shownWords.forEach(word => {
+    const target = normalizeWord(word);
+    const idx = spokenWords.indexOf(target, searchStart);
+    if(idx !== -1){
+      matched++;
+      searchStart = idx + 1;
+    }
+  });
+  return Math.round((matched / shownWords.length) * 100);
+}
+
+let recordingEnabled = (() => {
+  const stored = localStorage.getItem('sprintFluency_recordingEnabled');
+  return stored === null ? true : stored === '1'; // on by default
+})();
+let isCurrentlyRecording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingStream = null;
+let recordingMimeType = '';
+
+function pickRecordingMimeType(){
+  const candidates = ['audio/webm', 'audio/mp4', 'audio/ogg'];
+  if(window.MediaRecorder && MediaRecorder.isTypeSupported){
+    for(const c of candidates){
+      if(MediaRecorder.isTypeSupported(c)) return c;
+    }
+  }
+  return '';
+}
+
+function updateRecordButtonUI(){
+  recordToggleBtn.classList.toggle('active', recordingEnabled);
+  recordToggleBtn.title = recordingEnabled ? "Recording is ON — tap to turn off" : "Turn on recording";
+}
+updateRecordButtonUI();
+
+function updateRecordingIndicator(show){
+  recIndicatorEl.style.display = show ? 'flex' : 'none';
+}
+
+let toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toastEl.classList.remove('show'); }, 2600);
+}
+
+recordToggleBtn.addEventListener('click', () => {
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+    showToast("Recording isn't supported on this device.");
+    return;
+  }
+  recordingEnabled = !recordingEnabled;
+  localStorage.setItem('sprintFluency_recordingEnabled', recordingEnabled ? '1' : '0');
+  updateRecordButtonUI();
+  showToast(recordingEnabled ? "Recording is on — starts with your next sprint" : "Recording turned off");
+});
+
+// Recording is started the instant a sprint begins and stopped the instant
+// it ends (see startRound / finishRound below), so the audio file always
+// covers exactly one sprint, start to finish.
+async function startRecordingIfEnabled(){
+  if(!recordingEnabled) return;
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+    showToast("Recording isn't supported on this device.");
+    return;
+  }
+  try{
+    recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if(!recordingMimeType) recordingMimeType = pickRecordingMimeType();
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(recordingStream, recordingMimeType ? { mimeType: recordingMimeType } : undefined);
+    mediaRecorder.addEventListener('dataavailable', (e) => {
+      if(e.data && e.data.size > 0) recordedChunks.push(e.data);
+    });
+    mediaRecorder.start();
+    isCurrentlyRecording = true;
+    updateRecordingIndicator(true);
+    showToast("🔴 Recording this sprint");
+  }catch(err){
+    console.error('Could not start recording', err);
+    showToast("Microphone access is needed to record — check permissions.");
+    isCurrentlyRecording = false;
+    updateRecordingIndicator(false);
+  }
+}
+
+function stopRecordingAndSave(wpm){
+  if(!isCurrentlyRecording || !mediaRecorder){
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    mediaRecorder.addEventListener('stop', async () => {
+      isCurrentlyRecording = false;
+      updateRecordingIndicator(false);
+      if(recordingStream){
+        recordingStream.getTracks().forEach(t => t.stop());
+        recordingStream = null;
+      }
+      if(recordedChunks.length){
+        const blob = new Blob(recordedChunks, { type: recordingMimeType || 'audio/webm' });
+        try{
+          await saveRecordingToStore(blob, wpm);
+          showToast("Recording saved!");
+        }catch(e){
+          console.error('Failed to save recording', e);
+          if(e && e.name === 'QuotaExceededError'){
+            showToast("Storage is full — delete an old recording to make room.");
+          }else{
+            showToast("Couldn't save that recording.");
+          }
+        }
+      }else{
+        showToast("No audio was captured that round.");
+      }
+      resolve();
+    }, { once: true });
+    mediaRecorder.stop();
+  });
+}
+
+// ---------- My Recordings modal ----------
+let activeObjectUrls = [];
+
+function revokeActiveObjectUrls(){
+  activeObjectUrls.forEach(u => URL.revokeObjectURL(u));
+  activeObjectUrls = [];
+}
+
+function formatRecordingDate(ts){
+  return new Date(ts).toLocaleString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+  });
+}
+
+function extensionForMime(mime){
+  if(mime && mime.includes('mp4')) return 'm4a';
+  if(mime && mime.includes('ogg')) return 'ogg';
+  return 'webm';
+}
+
+function filenameForRecording(rec){
+  const dateSlug = new Date(rec.timestamp).toISOString().slice(0, 16).replace(/[:T]/g, '-');
+  const ext = extensionForMime(rec.mimeType);
+  return `popoosh-reading-${dateSlug}-${rec.wpm}wpm.${ext}`;
+}
+
+function renderRecordingsList(recs){
+  revokeActiveObjectUrls();
+  if(!recs.length){
+    recordingsListEl.innerHTML = '<div class="rec-empty">No recordings yet. Tap 🎙️ to turn on recording before your next sprint!</div>';
+    return;
+  }
+  recordingsListEl.innerHTML = '';
+  recs.forEach(rec => {
+    const blob = base64ToBlob(rec.dataUrl, rec.mimeType);
+    const url = URL.createObjectURL(blob);
+    activeObjectUrls.push(url);
+    const item = document.createElement('div');
+    item.className = 'rec-item';
+    item.innerHTML = `
+      <div class="rec-item-info">
+        <div class="rec-item-date">${formatRecordingDate(rec.timestamp)}</div>
+        <div class="rec-item-wpm">${rec.wpm} WPM</div>
+      </div>
+      <div class="rec-item-controls">
+        <audio controls src="${url}"></audio>
+        <a class="rec-download-btn" href="${url}" download="${filenameForRecording(rec)}" aria-label="Download recording">⬇️</a>
+        <button class="rec-delete-btn" data-id="${rec.id}" aria-label="Delete recording">🗑️</button>
+      </div>
+    `;
+    recordingsListEl.appendChild(item);
+  });
+  recordingsListEl.querySelectorAll('.rec-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      try{
+        deleteRecordingFromStore(id);
+        renderRecordingsList(getAllRecordingsFromStore());
+        showToast("Recording deleted");
+      }catch(e){
+        showToast("Couldn't delete that recording.");
+      }
+    });
+  });
+}
+
+function openRecordingsModal(){
+  recordingsModal.style.display = 'flex';
+  try{
+    renderRecordingsList(getAllRecordingsFromStore());
+  }catch(e){
+    recordingsListEl.innerHTML = '<div class="rec-empty">Couldn\'t load recordings.</div>';
+  }
+}
+
+function closeRecordingsModal(){
+  recordingsModal.style.display = 'none';
+  revokeActiveObjectUrls();
+}
+
+myRecordingsBtn.addEventListener('click', openRecordingsModal);
+closeRecordingsBtn.addEventListener('click', closeRecordingsModal);
+recordingsModal.addEventListener('click', (e) => {
+  if(e.target === recordingsModal) closeRecordingsModal();
+});
+
+// ---------- Lightweight confetti ----------
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const COLORS = ['#FF6F59','#1FB8A6','#FFC94A','#FF7A33','#E5543F'];
+let particles = [];
+
+function launchConfetti(){
+  particles = [];
+  const count = 110;
+  for(let i = 0; i < count; i++){
+    particles.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+      y: canvas.height / 2 - 40,
+      vx: (Math.random() - 0.5) * 10,
+      vy: Math.random() * -10 - 4,
+      size: Math.random() * 8 + 4,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      rotation: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 12,
+      gravity: 0.28 + Math.random() * 0.15
+    });
+  }
+  requestAnimationFrame(animateConfetti);
+}
+
+function animateConfetti(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let alive = false;
+  particles.forEach(p => {
+    p.vy += p.gravity;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rotation += p.vr;
+    if(p.y < canvas.height + 20) alive = true;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((p.rotation * Math.PI) / 180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+    ctx.restore();
+  });
+  if(alive){
+    requestAnimationFrame(animateConfetti);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+</script>
+</body>
+</html>
